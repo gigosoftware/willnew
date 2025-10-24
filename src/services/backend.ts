@@ -77,4 +77,7 @@ export const backendAPI = {
       method: 'PUT',
       body: JSON.stringify(config),
     }),
+
+  // Logs
+  getLogs: () => fetchAPI('/logs'),
 };

@@ -14,6 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'will-secret-key-change-in-producti
 const client = new DynamoDBClient({ region: 'us-east-1' });
 const docClient = DynamoDBDocumentClient.from(client);
 const USERS_TABLE = 'Will-Users';
+const LOGS_TABLE = 'Will-AccessLogs';
 
 app.use(cors());
 app.use(express.json());
@@ -38,6 +39,7 @@ const authMiddleware = (req, res, next) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection.remoteAddress;
     
     const result = await docClient.send(new GetCommand({
       TableName: USERS_TABLE,
@@ -59,6 +61,18 @@ app.post('/api/auth/login', async (req, res) => {
       JWT_SECRET,
       { expiresIn: '7d' }
     );
+    
+    // Registrar log de acesso
+    await docClient.send(new PutCommand({
+      TableName: LOGS_TABLE,
+      Item: {
+        id: `${user.email}#${Date.now()}`,
+        timestamp: Date.now(),
+        email: user.email,
+        ip: ip,
+        date: new Date().toISOString()
+      }
+    })).catch(err => console.error('Log error:', err));
     
     res.json({
       token,
@@ -227,6 +241,26 @@ app.get('/api/config', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error('Get config error:', error);
+    res.status(500).json({ error: 'Erro no servidor' });
+  }
+});
+
+// Obter logs de acesso (admin only)
+app.get('/api/logs', authMiddleware, async (req, res) => {
+  try {
+    if (!req.isAdmin) {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+    
+    const result = await docClient.send(new ScanCommand({
+      TableName: LOGS_TABLE,
+      Limit: 15
+    }));
+    
+    const logs = result.Items.sort((a, b) => b.timestamp - a.timestamp).slice(0, 15);
+    res.json(logs);
+  } catch (error) {
+    console.error('Get logs error:', error);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 });

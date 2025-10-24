@@ -2,13 +2,23 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
 import { usersAPI } from '../services/usersAPI';
-import { ArrowLeft, Plus, Trash2, Edit } from 'lucide-react';
+import { backendAPI } from '../services/backend';
+import { ArrowLeft, Plus, Trash2, Edit, Activity } from 'lucide-react';
 import type { User } from '../types';
+
+interface AccessLog {
+  id: string;
+  email: string;
+  ip: string;
+  date: string;
+  timestamp: number;
+}
 
 export const Users = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
+  const [logs, setLogs] = useState<AccessLog[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ email: '', password: '', isAdmin: false });
@@ -19,6 +29,7 @@ export const Users = () => {
       return;
     }
     loadUsers();
+    loadLogs();
   }, [user, navigate]);
 
   const loadUsers = async () => {
@@ -27,6 +38,15 @@ export const Users = () => {
       setUsers(data);
     } catch (error) {
       console.error('Load users error:', error);
+    }
+  };
+
+  const loadLogs = async () => {
+    try {
+      const data = await backendAPI.getLogs();
+      setLogs(data);
+    } catch (error) {
+      console.error('Load logs error:', error);
     }
   };
 
@@ -171,6 +191,48 @@ export const Users = () => {
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Logs de Acesso */}
+        <div className="mt-8 bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden border border-white/20">
+          <div className="bg-white/5 px-6 py-3 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-400" />
+            <h2 className="text-lg font-semibold">Últimos 15 Acessos</h2>
+          </div>
+          <table className="w-full">
+            <thead className="bg-white/5">
+              <tr>
+                <th className="px-6 py-3 text-left">Usuário</th>
+                <th className="px-6 py-3 text-left">IP</th>
+                <th className="px-6 py-3 text-left">Data/Hora</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log) => (
+                <tr key={log.id} className="border-t border-white/10">
+                  <td className="px-6 py-3">{log.email}</td>
+                  <td className="px-6 py-3 font-mono text-sm">{log.ip}</td>
+                  <td className="px-6 py-3">
+                    {new Date(log.date).toLocaleString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit'
+                    })}
+                  </td>
+                </tr>
+              ))}
+              {logs.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="px-6 py-8 text-center text-gray-400">
+                    Nenhum acesso registrado
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
