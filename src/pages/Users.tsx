@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
-import { authService } from '../services/auth';
+import { usersAPI } from '../services/usersAPI';
 import { ArrowLeft, Plus, Trash2, Edit } from 'lucide-react';
 import type { User } from '../types';
 
@@ -21,21 +21,33 @@ export const Users = () => {
     loadUsers();
   }, [user, navigate]);
 
-  const loadUsers = () => {
-    setUsers(authService.getAllUsers());
+  const loadUsers = async () => {
+    try {
+      const data = await usersAPI.getAllUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error('Load users error:', error);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingId) {
-      authService.updateUser(editingId, formData);
-    } else {
-      authService.createUser(formData.email, formData.password, formData.isAdmin);
+    try {
+      if (editingId) {
+        const updates: any = { isAdmin: formData.isAdmin };
+        if (formData.password) updates.password = formData.password;
+        await usersAPI.updateUser(formData.email, updates);
+      } else {
+        await usersAPI.createUser(formData.email, formData.password, formData.isAdmin);
+      }
+      setFormData({ email: '', password: '', isAdmin: false });
+      setShowForm(false);
+      setEditingId(null);
+      loadUsers();
+    } catch (error) {
+      console.error('Save user error:', error);
+      alert('Erro ao salvar usuário');
     }
-    setFormData({ email: '', password: '', isAdmin: false });
-    setShowForm(false);
-    setEditingId(null);
-    loadUsers();
   };
 
   const handleEdit = (u: User) => {
@@ -44,10 +56,15 @@ export const Users = () => {
     setShowForm(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (email: string) => {
     if (confirm('Confirma exclusão?')) {
-      authService.deleteUser(id);
-      loadUsers();
+      try {
+        await usersAPI.deleteUser(email);
+        loadUsers();
+      } catch (error) {
+        console.error('Delete user error:', error);
+        alert('Erro ao deletar usuário');
+      }
     }
   };
 
@@ -148,7 +165,7 @@ export const Users = () => {
                     <button onClick={() => handleEdit(u)} className="p-2 hover:bg-white/10 rounded mr-2">
                       <Edit className="w-4 h-4" />
                     </button>
-                    <button onClick={() => handleDelete(u.id)} className="p-2 hover:bg-red-600/20 rounded">
+                    <button onClick={() => handleDelete(u.email)} className="p-2 hover:bg-red-600/20 rounded">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </td>

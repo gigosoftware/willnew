@@ -1,0 +1,13 @@
+{
+  "name": "will-backend",
+  "version": "1.0.0",
+  "description": "Will Backend API",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "keywords": [],
+  "author": "Rogério Gigo",
+  "license": "ISC"
+}

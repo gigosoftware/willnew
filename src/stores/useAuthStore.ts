@@ -1,22 +1,32 @@
 import { create } from 'zustand';
 import type { AuthState } from '../types';
-import { authService } from '../services/auth';
+import { backendAPI } from '../services/backend';
+
+const getStoredUser = () => {
+  const token = localStorage.getItem('will_token');
+  const user = localStorage.getItem('will_user');
+  return token && user ? JSON.parse(user) : null;
+};
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: authService.getCurrentUser(),
-  isAuthenticated: !!authService.getCurrentUser(),
+  user: getStoredUser(),
+  isAuthenticated: !!getStoredUser(),
 
   login: async (email: string, password: string) => {
-    const user = authService.login(email, password);
-    if (user) {
+    try {
+      const user = await backendAPI.login(email, password);
+      localStorage.setItem('will_user', JSON.stringify(user));
       set({ user, isAuthenticated: true });
       return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   },
 
   logout: () => {
-    authService.logout();
+    backendAPI.logout();
+    localStorage.removeItem('will_user');
     set({ user: null, isAuthenticated: false });
   },
 }));
