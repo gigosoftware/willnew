@@ -38,7 +38,7 @@ export const HLSPlayer = ({ src, className = '' }: HLSPlayerProps) => {
       
       hlsRef.current = hls;
       
-      hls.on(Hls.Events.ERROR, (event, data) => {
+      hls.on(Hls.Events.ERROR, (_event, data) => {
         console.error('[HLSPlayer] Error:', data);
         if (data.fatal) {
           setError(`Erro: ${data.type}`);

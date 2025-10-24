@@ -1,5 +1,3 @@
-import type { LayoutType } from '../types';
-
 export const getGridLayout = (type: string): { cols: number; rows: number } => {
   const match = type.match(/(\d+)x(\d+)/);
   if (match) {
