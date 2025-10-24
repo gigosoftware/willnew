@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '../stores/usePlayerStore';
-import { ArrowLeft, Clock, Type, Info, Maximize } from 'lucide-react';
+import { ArrowLeft, Clock, Type, Info, Maximize, Zap } from 'lucide-react';
 
 export const Settings = () => {
   const navigate = useNavigate();
-  const { interval, setInterval, showStreamTitles, setShowStreamTitles, showMosaicInfo, setShowMosaicInfo, autoFullscreen, setAutoFullscreen } = usePlayerStore();
+  const { interval, setInterval, showStreamTitles, setShowStreamTitles, showMosaicInfo, setShowMosaicInfo, autoFullscreen, setAutoFullscreen, smartInterval, setSmartInterval } = usePlayerStore();
 
   return (
     <div className="min-h-screen text-white">
@@ -110,6 +110,31 @@ export const Settings = () => {
                   <span
                     className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
                       autoFullscreen ? 'translate-x-7' : ''
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="flex items-center gap-3">
+                  <Zap className="w-5 h-5 text-yellow-400" />
+                  <div>
+                    <p className="font-medium flex items-center gap-2">
+                      Intervalo Inteligente
+                      <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">NOVO</span>
+                    </p>
+                    <p className="text-sm text-gray-400">Ajusta tempo automaticamente por número de câmeras</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSmartInterval(!smartInterval)}
+                  className={`relative w-14 h-7 rounded-full transition-colors ${
+                    smartInterval ? 'bg-yellow-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                      smartInterval ? 'translate-x-7' : ''
                     }`}
                   />
                 </button>

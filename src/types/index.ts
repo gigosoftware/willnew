@@ -45,6 +45,7 @@ export interface PlayerState {
   showStreamTitles: boolean;
   showMosaicInfo: boolean;
   autoFullscreen: boolean;
+  smartInterval: boolean;
   setPlaying: (playing: boolean) => void;
   nextMosaic: () => void;
   prevMosaic: () => void;
@@ -52,6 +53,7 @@ export interface PlayerState {
   setShowStreamTitles: (show: boolean) => void;
   setShowMosaicInfo: (show: boolean) => void;
   setAutoFullscreen: (auto: boolean) => void;
+  setSmartInterval: (smart: boolean) => void;
 }
 
 export interface ThemeState {

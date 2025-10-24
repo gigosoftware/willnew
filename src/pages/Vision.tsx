@@ -5,11 +5,12 @@ import { usePlayerStore } from '../stores/usePlayerStore';
 import { MosaicGrid } from '../components/MosaicGrid';
 import { Play, Pause, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { api } from '../services/api';
+import { calculateSmartInterval, getCameraCount } from '../utils/smartInterval';
 import type { Mosaic } from '../types';
 
 export const Vision = () => {
   const { selectedMosaics } = useMosaicStore();
-  const { isPlaying, currentIndex, interval, setPlaying, nextMosaic, prevMosaic, showMosaicInfo, autoFullscreen } = usePlayerStore();
+  const { isPlaying, currentIndex, interval, setPlaying, nextMosaic, prevMosaic, showMosaicInfo, autoFullscreen, smartInterval } = usePlayerStore();
   const navigate = useNavigate();
   const [fullMosaics, setFullMosaics] = useState<Mosaic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,24 +42,40 @@ export const Vision = () => {
   }, [selectedMosaics, navigate]);
 
   useEffect(() => {
-    setCountdown(interval);
-  }, [currentIndex, interval]);
+    // Calcula intervalo baseado no modo inteligente
+    let effectiveInterval = interval;
+    
+    if (smartInterval && currentMosaic) {
+      const cameraCount = getCameraCount(currentMosaic.type);
+      effectiveInterval = calculateSmartInterval(interval, cameraCount);
+      console.log(`[Vision] Smart Interval: ${cameraCount} cameras = ${effectiveInterval}s`);
+    }
+    
+    setCountdown(effectiveInterval);
+  }, [currentIndex, interval, smartInterval, currentMosaic]);
 
   useEffect(() => {
     if (!isPlaying || fullMosaics.length <= 1) return;
+
+    // Calcula intervalo efetivo para o timer
+    let effectiveInterval = interval;
+    if (smartInterval && currentMosaic) {
+      const cameraCount = getCameraCount(currentMosaic.type);
+      effectiveInterval = calculateSmartInterval(interval, cameraCount);
+    }
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           nextMosaic();
-          return interval;
+          return effectiveInterval;
         }
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPlaying, interval, fullMosaics.length, nextMosaic]);
+  }, [isPlaying, interval, smartInterval, fullMosaics.length, currentMosaic, nextMosaic]);
 
   useEffect(() => {
     if (autoFullscreen) {

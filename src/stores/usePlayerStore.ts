@@ -14,11 +14,12 @@ const loadConfig = () => {
     interval: 30, 
     showStreamTitles: true, 
     showMosaicInfo: true, 
-    autoFullscreen: true 
+    autoFullscreen: true,
+    smartInterval: false
   };
 };
 
-const saveConfig = (config: { interval: number; showStreamTitles: boolean; showMosaicInfo: boolean; autoFullscreen: boolean }) => {
+const saveConfig = (config: { interval: number; showStreamTitles: boolean; showMosaicInfo: boolean; autoFullscreen: boolean; smartInterval: boolean }) => {
   const key = getStorageKey();
   localStorage.setItem(key, JSON.stringify(config));
 };
@@ -32,6 +33,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   showStreamTitles: initialConfig.showStreamTitles,
   showMosaicInfo: initialConfig.showMosaicInfo,
   autoFullscreen: initialConfig.autoFullscreen,
+  smartInterval: initialConfig.smartInterval ?? false,
 
   setPlaying: (playing: boolean) => set({ isPlaying: playing }),
 
@@ -52,7 +54,20 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       interval, 
       showStreamTitles: state.showStreamTitles, 
       showMosaicInfo: state.showMosaicInfo, 
-      autoFullscreen: state.autoFullscreen 
+      autoFullscreen: state.autoFullscreen,
+      smartInterval: state.smartInterval
+    });
+  },
+
+  setSmartInterval: (smart: boolean) => {
+    set({ smartInterval: smart });
+    const state = get();
+    saveConfig({ 
+      interval: state.interval, 
+      showStreamTitles: state.showStreamTitles, 
+      showMosaicInfo: state.showMosaicInfo, 
+      autoFullscreen: state.autoFullscreen,
+      smartInterval: smart
     });
   },
 
@@ -63,7 +78,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       interval: state.interval, 
       showStreamTitles: show, 
       showMosaicInfo: state.showMosaicInfo, 
-      autoFullscreen: state.autoFullscreen 
+      autoFullscreen: state.autoFullscreen,
+      smartInterval: state.smartInterval
     });
   },
 
@@ -74,7 +90,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       interval: state.interval, 
       showStreamTitles: state.showStreamTitles, 
       showMosaicInfo: show, 
-      autoFullscreen: state.autoFullscreen 
+      autoFullscreen: state.autoFullscreen,
+      smartInterval: state.smartInterval
     });
   },
 
@@ -85,7 +102,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       interval: state.interval, 
       showStreamTitles: state.showStreamTitles, 
       showMosaicInfo: state.showMosaicInfo, 
-      autoFullscreen: auto 
+      autoFullscreen: auto,
+      smartInterval: state.smartInterval
     });
   },
 }));
