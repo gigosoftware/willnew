@@ -12,8 +12,9 @@ interface MosaicGridProps {
 export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
   const { cols, rows } = getGridLayout(mosaic.type);
   const totalCells = cols * rows;
-  const { showStreamTitles } = usePlayerStore();
+  const { showStreamTitles, isPlaying, setPlaying } = usePlayerStore();
   const [maximizedStream, setMaximizedStream] = useState<{ name: string; title: string; hlsUrl: string } | null>(null);
+  const [wasPlaying, setWasPlaying] = useState(false);
 
   console.log('[MosaicGrid] Mosaic:', mosaic);
 
@@ -24,7 +25,10 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
           <div className="flex items-center justify-between p-4 bg-gray-900/95 backdrop-blur-sm">
             <h2 className="text-white font-medium">{maximizedStream.title || maximizedStream.name}</h2>
             <button
-              onClick={() => setMaximizedStream(null)}
+              onClick={() => {
+                setMaximizedStream(null);
+                if (wasPlaying) setPlaying(true);
+              }}
               className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-white"
             >
               <X className="w-6 h-6" />
@@ -32,7 +36,10 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
           </div>
           <div 
             className="flex-1 flex items-center justify-center p-4 cursor-pointer"
-            onClick={() => setMaximizedStream(null)}
+            onClick={() => {
+              setMaximizedStream(null);
+              if (wasPlaying) setPlaying(true);
+            }}
           >
             <HLSPlayer src={maximizedStream.hlsUrl} className="w-full h-full" />
           </div>
@@ -64,7 +71,11 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
           <div 
             key={index} 
             className="relative overflow-hidden bg-gray-900 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
-            onClick={() => setMaximizedStream({ name: stream.name!, title: stream.title || stream.name!, hlsUrl })}
+            onClick={() => {
+              setWasPlaying(isPlaying);
+              setPlaying(false);
+              setMaximizedStream({ name: stream.name!, title: stream.title || stream.name!, hlsUrl });
+            }}
           >
             <HLSPlayer src={hlsUrl} />
             {showStreamTitles && stream.title && (
