@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
+import { usePlayerStore } from '../stores/usePlayerStore';
 import { Monitor } from 'lucide-react';
 
 export const Login = () => {
@@ -8,6 +9,7 @@ export const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const login = useAuthStore((s) => s.login);
+  const loadUserConfig = usePlayerStore((s) => s.loadUserConfig);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,6 +17,7 @@ export const Login = () => {
     setError('');
     const success = await login(email, password);
     if (success) {
+      loadUserConfig(); // Carrega configurações do usuário
       navigate('/');
     } else {
       setError('Credenciais inválidas');

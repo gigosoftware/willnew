@@ -46,6 +46,7 @@ export interface PlayerState {
   showMosaicInfo: boolean;
   autoFullscreen: boolean;
   smartInterval: boolean;
+  loadUserConfig: () => void;
   setPlaying: (playing: boolean) => void;
   nextMosaic: () => void;
   prevMosaic: () => void;

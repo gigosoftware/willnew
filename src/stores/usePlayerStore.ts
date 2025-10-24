@@ -35,7 +35,20 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   autoFullscreen: initialConfig.autoFullscreen,
   smartInterval: initialConfig.smartInterval ?? false,
 
-  setPlaying: (playing: boolean) => set({ isPlaying: playing }),
+  loadUserConfig: () => {
+    const config = loadConfig();
+    set({
+      interval: config.interval,
+      showStreamTitles: config.showStreamTitles,
+      showMosaicInfo: config.showMosaicInfo,
+      autoFullscreen: config.autoFullscreen,
+      smartInterval: config.smartInterval ?? false,
+    });
+  },
+
+  setPlaying: (playing: boolean) => {
+    set({ isPlaying: playing });
+  },
 
   nextMosaic: () => {
     const { currentIndex } = get();

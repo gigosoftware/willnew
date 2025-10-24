@@ -126,7 +126,7 @@ export const Vision = () => {
 
         {/* Center: Countdown */}
         <div className="flex items-center gap-4">
-          {showMosaicInfo && isPlaying && fullMosaics.length > 1 && (
+          {isPlaying && fullMosaics.length > 1 && (
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
               <span className="text-white font-mono text-2xl">{formatTime(countdown)}</span>
