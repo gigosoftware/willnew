@@ -33,6 +33,8 @@ Sistema moderno de monitoramento de câmeras via mosaicos, consumindo a API do F
 ### 🖥️ Interface Premium
 - **Lounge Intuitivo**: Seleção visual de mosaicos com busca e filtros
 - **Player Fullscreen**: Reprodução com rotação automática configurável (10s a 5min)
+- **Click-to-Maximize**: Clique em qualquer câmera para visualização fullscreen individual
+- **Pausa Inteligente**: Contador pausa automaticamente ao maximizar câmera
 - **Múltiplos Temas**: Dark, Neon e Corporate
 - **UI/UX Moderna**: Animações fluidas com Framer Motion
 
@@ -230,16 +232,25 @@ npm run build -- --mode analyze
 
 ## 🚀 Deploy
 
-### AWS EC2 (Recomendado)
+### 🌐 Produção
 
-Documentação completa de deploy será fornecida separadamente.
+**URL**: https://will.conectae.com.br
 
-**Requisitos mínimos:**
-- EC2 t3.micro ou superior
-- Ubuntu 22.04 LTS
-- Nginx
-- Node.js 18+
-- Certificado SSL (Let's Encrypt)
+### AWS EC2 (Atual)
+
+**Servidor:**
+- **Instance ID**: i-0cfd9596b30580183
+- **IP**: 54.92.202.37
+- **OS**: Ubuntu 24.04.3 LTS
+- **Região**: us-east-1
+- **SSH**: `ssh -i ~/.ssh/will-key.pem ubuntu@54.92.202.37`
+
+**Stack:**
+- Nginx (reverse proxy + SSL)
+- Let's Encrypt (SSL/TLS)
+- Node.js Backend (porta 3001)
+
+📖 **Documentação completa**: [INFRASTRUCTURE.md](INFRASTRUCTURE.md)
 
 ### Outras Plataformas
 
@@ -337,6 +348,7 @@ npm run build
 
 ## 📚 Documentação
 
+- **[Infraestrutura AWS](INFRASTRUCTURE.md)** - Configuração completa do servidor
 - [Arquitetura](ARCHITECTURE.md)
 - [Guia de Contribuição](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
