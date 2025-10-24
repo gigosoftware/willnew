@@ -173,9 +173,12 @@ sudo systemctl restart nginx
 - [x] Certbot instalado
 - [x] Build deployado
 - [x] Aplicação acessível via HTTP
-- [ ] DNS configurado (will.conectae.com.br)
-- [ ] SSL configurado (HTTPS)
-- [ ] Testes finais
+- [x] DNS configurado (will.conectae.com.br)
+- [x] SSL configurado (HTTPS)
+- [x] Redirect HTTP → HTTPS
+- [x] Certificado válido até 2026-01-22
+- [x] Renovação automática configurada
+- [x] Deploy finalizado com sucesso!
 
 ---
 
