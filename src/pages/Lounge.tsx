@@ -36,7 +36,7 @@ export const Lounge = () => {
   useEffect(() => {
     if (!configLoaded || !autoStart || selectedMosaics.length === 0 || mosaics.length === 0) return;
 
-    let inactivityTimer: NodeJS.Timeout;
+    let inactivityTimer: ReturnType<typeof setTimeout>;
 
     const startTimer = () => {
       inactivityTimer = setTimeout(() => {
