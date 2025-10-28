@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { MosaicState } from '../types';
 import { api } from '../services/api';
+import { backendAPI } from '../services/backend';
 
 export const useMosaicStore = create<MosaicState>((set, get) => ({
   mosaics: [],
@@ -19,14 +20,29 @@ export const useMosaicStore = create<MosaicState>((set, get) => ({
     }
   },
 
-  toggleMosaic: (id: number) => {
-    const { selectedMosaics } = get();
-    set({
-      selectedMosaics: selectedMosaics.includes(id)
-        ? selectedMosaics.filter(m => m !== id)
-        : [...selectedMosaics, id],
-    });
+  loadSelectedMosaics: async () => {
+    try {
+      const config = await backendAPI.getConfig();
+      const savedIds = config.selectedMosaics || [];
+      const { mosaics } = get();
+      const validIds = savedIds.filter((id: number) => mosaics.some(m => m.id === id));
+      set({ selectedMosaics: validIds });
+    } catch (error) {
+      console.error('Load selected mosaics error:', error);
+    }
   },
 
-  clearSelection: () => set({ selectedMosaics: [] }),
+  toggleMosaic: (id: number) => {
+    const { selectedMosaics } = get();
+    const newSelection = selectedMosaics.includes(id)
+      ? selectedMosaics.filter(m => m !== id)
+      : [...selectedMosaics, id];
+    set({ selectedMosaics: newSelection });
+    backendAPI.saveSelectedMosaics(newSelection).catch(console.error);
+  },
+
+  clearSelection: () => {
+    set({ selectedMosaics: [] });
+    backendAPI.saveSelectedMosaics([]).catch(console.error);
+  },
 }));

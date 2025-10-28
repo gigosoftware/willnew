@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMosaicStore } from '../stores/useMosaicStore';
 import { useAuthStore } from '../stores/useAuthStore';
+import { usePlayerStore } from '../stores/usePlayerStore';
 import { ThemeSelector } from '../components/ThemeSelector';
 import { Play, Users, LogOut, Search, Grid, Settings as SettingsIcon, CheckSquare, XSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const Lounge = () => {
-  const { mosaics, selectedMosaics, isLoading, fetchMosaics, toggleMosaic, clearSelection } = useMosaicStore();
+  const { mosaics, selectedMosaics, isLoading, fetchMosaics, loadSelectedMosaics, toggleMosaic, clearSelection } = useMosaicStore();
+  const { autoStart, loadUserConfig } = usePlayerStore();
+  const [configLoaded, setConfigLoaded] = useState(false);
 
   const selectAll = () => {
     mosaics.forEach(m => {
@@ -21,8 +24,44 @@ export const Lounge = () => {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetchMosaics();
-  }, [fetchMosaics]);
+    const loadData = async () => {
+      await loadUserConfig();
+      setConfigLoaded(true);
+      await fetchMosaics();
+      await loadSelectedMosaics();
+    };
+    loadData();
+  }, [fetchMosaics, loadSelectedMosaics, loadUserConfig]);
+
+  useEffect(() => {
+    if (!configLoaded || !autoStart || selectedMosaics.length === 0 || mosaics.length === 0) return;
+
+    let inactivityTimer: NodeJS.Timeout;
+
+    const startTimer = () => {
+      inactivityTimer = setTimeout(() => {
+        navigate('/vision');
+      }, 60000);
+    };
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      startTimer();
+    };
+
+    startTimer();
+
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('click', resetTimer);
+
+    return () => {
+      clearTimeout(inactivityTimer);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('click', resetTimer);
+    };
+  }, [configLoaded, autoStart, selectedMosaics, mosaics, navigate]);
 
   const filteredMosaics = mosaics.filter((m) =>
     m.title.toLowerCase().includes(search.toLowerCase())

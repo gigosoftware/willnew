@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { HLSPlayer } from './HLSPlayer';
 import type { Mosaic } from '../types';
@@ -16,7 +16,33 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
   const [maximizedStream, setMaximizedStream] = useState<{ name: string; title: string; hlsUrl: string } | null>(null);
   const [wasPlaying, setWasPlaying] = useState(false);
 
-  console.log('[MosaicGrid] Mosaic:', mosaic);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (maximizedStream && (e.key === 'Escape' || (e.key >= '1' && e.key <= '9'))) {
+        e.preventDefault();
+        setMaximizedStream(null);
+        if (wasPlaying) setPlaying(true);
+        return;
+      }
+
+      if (!maximizedStream && e.key >= '1' && e.key <= '9') {
+        const streamIndex = parseInt(e.key) - 1;
+        const stream = mosaic.streams?.[streamIndex];
+        
+        if (stream && stream.name && stream.playback_token) {
+          e.preventDefault();
+          const endpoint = stream.streaming_endpoint || (mosaic as any).stats?.streaming_endpoint || 'https://vigilancia.conectae.com.br';
+          const hlsUrl = `${endpoint}/${stream.name}/index.m3u8?token=${stream.playback_token}`;
+          setWasPlaying(isPlaying);
+          setPlaying(false);
+          setMaximizedStream({ name: stream.name, title: stream.title || stream.name, hlsUrl });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [maximizedStream, mosaic, isPlaying, setPlaying, wasPlaying]);
 
   return (
     <>
@@ -30,6 +56,7 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
                 if (wasPlaying) setPlaying(true);
               }}
               className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-white"
+              title="Fechar (ESC)"
             >
               <X className="w-6 h-6" />
             </button>
@@ -65,7 +92,6 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
 
         const endpoint = stream.streaming_endpoint || (mosaic as any).stats?.streaming_endpoint || 'https://vigilancia.conectae.com.br';
         const hlsUrl = `${endpoint}/${stream.name}/index.m3u8?token=${stream.playback_token}`;
-        console.log(`[MosaicGrid] HLS URL ${index}:`, hlsUrl);
 
         return (
           <div 
@@ -79,7 +105,7 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
           >
             <HLSPlayer src={hlsUrl} />
             {showStreamTitles && stream.title && (
-              <div className="absolute bottom-2 left-2 right-2 bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded truncate">
+              <div className="absolute bottom-2 left-2 right-2 bg-black/50 backdrop-blur-sm text-white text-sm px-2 py-1 rounded truncate">
                 {stream.title}
               </div>
             )}

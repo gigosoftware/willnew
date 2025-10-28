@@ -120,7 +120,9 @@ app.post('/api/users', authMiddleware, async (req, res) => {
         showStreamTitles: true,
         showMosaicInfo: true,
         autoFullscreen: true,
-        smartInterval: false
+        smartInterval: true,
+        autoStart: true,
+        selectedMosaics: []
       }
     };
     
@@ -237,7 +239,9 @@ app.get('/api/config', authMiddleware, async (req, res) => {
       showStreamTitles: true,
       showMosaicInfo: true,
       autoFullscreen: true,
-      smartInterval: false
+      smartInterval: true,
+      autoStart: true,
+      selectedMosaics: []
     });
   } catch (error) {
     console.error('Get config error:', error);

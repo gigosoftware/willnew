@@ -34,6 +34,7 @@ export interface MosaicState {
   isLoading: boolean;
   error: string | null;
   fetchMosaics: () => Promise<void>;
+  loadSelectedMosaics: () => Promise<void>;
   toggleMosaic: (id: number) => void;
   clearSelection: () => void;
 }
@@ -46,6 +47,7 @@ export interface PlayerState {
   showMosaicInfo: boolean;
   autoFullscreen: boolean;
   smartInterval: boolean;
+  autoStart: boolean;
   loadUserConfig: () => void;
   setPlaying: (playing: boolean) => void;
   nextMosaic: () => void;
@@ -55,6 +57,7 @@ export interface PlayerState {
   setShowMosaicInfo: (show: boolean) => void;
   setAutoFullscreen: (auto: boolean) => void;
   setSmartInterval: (smart: boolean) => void;
+  setAutoStart: (auto: boolean) => void;
 }
 
 export interface ThemeState {

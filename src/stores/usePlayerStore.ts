@@ -7,7 +7,8 @@ const defaultConfig = {
   showStreamTitles: true,
   showMosaicInfo: true,
   autoFullscreen: true,
-  smartInterval: false
+  smartInterval: true,
+  autoStart: true
 };
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -18,6 +19,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   showMosaicInfo: defaultConfig.showMosaicInfo,
   autoFullscreen: defaultConfig.autoFullscreen,
   smartInterval: defaultConfig.smartInterval,
+  autoStart: defaultConfig.autoStart,
 
   loadUserConfig: async () => {
     try {
@@ -28,6 +30,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         showMosaicInfo: config.showMosaicInfo,
         autoFullscreen: config.autoFullscreen,
         smartInterval: config.smartInterval,
+        autoStart: config.autoStart,
       });
     } catch (error) {
       console.error('Load config error:', error);
@@ -48,63 +51,93 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     set({ currentIndex: Math.max(0, currentIndex - 1) });
   },
 
-  setInterval: (interval: number) => {
+  setInterval: async (interval: number) => {
     set({ interval });
     const state = get();
+    const config = await backendAPI.getConfig();
     backendAPI.saveConfig({ 
+      ...config,
       interval, 
       showStreamTitles: state.showStreamTitles, 
       showMosaicInfo: state.showMosaicInfo, 
       autoFullscreen: state.autoFullscreen,
-      smartInterval: state.smartInterval
+      smartInterval: state.smartInterval,
+      autoStart: state.autoStart
     }).catch(console.error);
   },
 
-  setSmartInterval: (smart: boolean) => {
+  setSmartInterval: async (smart: boolean) => {
     set({ smartInterval: smart });
     const state = get();
+    const config = await backendAPI.getConfig();
     backendAPI.saveConfig({ 
+      ...config,
       interval: state.interval, 
       showStreamTitles: state.showStreamTitles, 
       showMosaicInfo: state.showMosaicInfo, 
       autoFullscreen: state.autoFullscreen,
-      smartInterval: smart
+      smartInterval: smart,
+      autoStart: state.autoStart
     }).catch(console.error);
   },
 
-  setShowStreamTitles: (show: boolean) => {
+  setShowStreamTitles: async (show: boolean) => {
     set({ showStreamTitles: show });
     const state = get();
+    const config = await backendAPI.getConfig();
     backendAPI.saveConfig({ 
+      ...config,
       interval: state.interval, 
       showStreamTitles: show, 
       showMosaicInfo: state.showMosaicInfo, 
       autoFullscreen: state.autoFullscreen,
-      smartInterval: state.smartInterval
+      smartInterval: state.smartInterval,
+      autoStart: state.autoStart
     }).catch(console.error);
   },
 
-  setShowMosaicInfo: (show: boolean) => {
+  setShowMosaicInfo: async (show: boolean) => {
     set({ showMosaicInfo: show });
     const state = get();
+    const config = await backendAPI.getConfig();
     backendAPI.saveConfig({ 
+      ...config,
       interval: state.interval, 
       showStreamTitles: state.showStreamTitles, 
       showMosaicInfo: show, 
       autoFullscreen: state.autoFullscreen,
-      smartInterval: state.smartInterval
+      smartInterval: state.smartInterval,
+      autoStart: state.autoStart
     }).catch(console.error);
   },
 
-  setAutoFullscreen: (auto: boolean) => {
+  setAutoFullscreen: async (auto: boolean) => {
     set({ autoFullscreen: auto });
     const state = get();
+    const config = await backendAPI.getConfig();
     backendAPI.saveConfig({ 
+      ...config,
       interval: state.interval, 
       showStreamTitles: state.showStreamTitles, 
       showMosaicInfo: state.showMosaicInfo, 
       autoFullscreen: auto,
-      smartInterval: state.smartInterval
+      smartInterval: state.smartInterval,
+      autoStart: state.autoStart
+    }).catch(console.error);
+  },
+
+  setAutoStart: async (auto: boolean) => {
+    set({ autoStart: auto });
+    const state = get();
+    const config = await backendAPI.getConfig();
+    backendAPI.saveConfig({ 
+      ...config,
+      interval: state.interval, 
+      showStreamTitles: state.showStreamTitles, 
+      showMosaicInfo: state.showMosaicInfo, 
+      autoFullscreen: state.autoFullscreen,
+      smartInterval: state.smartInterval,
+      autoStart: auto
     }).catch(console.error);
   },
 }));

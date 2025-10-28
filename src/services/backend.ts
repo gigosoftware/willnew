@@ -78,6 +78,14 @@ export const backendAPI = {
       body: JSON.stringify(config),
     }),
 
+  saveSelectedMosaics: async (selectedMosaics: number[]) => {
+    const config = await fetchAPI('/config');
+    return fetchAPI('/config', {
+      method: 'PUT',
+      body: JSON.stringify({ ...config, selectedMosaics }),
+    });
+  },
+
   // Logs
   getLogs: () => fetchAPI('/logs'),
 };

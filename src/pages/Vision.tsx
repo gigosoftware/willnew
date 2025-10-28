@@ -79,18 +79,43 @@ export const Vision = () => {
 
   useEffect(() => {
     if (autoFullscreen) {
-      const enterFullscreen = () => {
-        document.documentElement.requestFullscreen?.();
+      const enterFullscreen = async () => {
+        try {
+          await document.documentElement.requestFullscreen?.();
+        } catch (error) {
+          // Fullscreen requires user interaction
+        }
       };
       enterFullscreen();
     }
 
     return () => {
       if (document.fullscreenElement) {
-        document.exitFullscreen?.();
+        document.exitFullscreen?.().catch(() => {});
       }
     };
   }, [autoFullscreen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentIndex > 0) prevMosaic();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (currentIndex < fullMosaics.length - 1) nextMosaic();
+      } else if (e.key === 'p' || e.key === 'P') {
+        e.preventDefault();
+        setPlaying(!isPlaying);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        navigate('/');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex, fullMosaics.length, isPlaying, prevMosaic, nextMosaic, setPlaying, navigate]);
 
   if (isLoading) {
     return (
@@ -117,7 +142,7 @@ export const Vision = () => {
           <div className="flex items-center gap-3">
             <div className="text-blue-400 font-bold text-xl">VISION</div>
             <div className="h-6 w-px bg-white/20" />
-            <div className="text-white font-medium">{currentMosaic.title}</div>
+            <div className="text-white font-medium text-xl">{currentMosaic.title}</div>
             <div className="text-gray-400 text-sm">({currentIndex + 1}/{fullMosaics.length})</div>
           </div>
         ) : (

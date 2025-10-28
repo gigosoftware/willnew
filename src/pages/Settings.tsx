@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '../stores/usePlayerStore';
-import { ArrowLeft, Clock, Type, Info, Maximize, Zap } from 'lucide-react';
+import { ArrowLeft, Clock, Type, Info, Maximize, Zap, Play } from 'lucide-react';
 
 export const Settings = () => {
   const navigate = useNavigate();
-  const { interval, setInterval, showStreamTitles, setShowStreamTitles, showMosaicInfo, setShowMosaicInfo, autoFullscreen, setAutoFullscreen, smartInterval, setSmartInterval } = usePlayerStore();
+  const { interval, setInterval, showStreamTitles, setShowStreamTitles, showMosaicInfo, setShowMosaicInfo, autoFullscreen, setAutoFullscreen, smartInterval, setSmartInterval, autoStart, setAutoStart } = usePlayerStore();
 
   return (
     <div className="min-h-screen text-white">
@@ -135,6 +135,31 @@ export const Settings = () => {
                   <span
                     className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
                       smartInterval ? 'translate-x-7' : ''
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="flex items-center gap-3">
+                  <Play className="w-5 h-5 text-green-400" />
+                  <div>
+                    <p className="font-medium flex items-center gap-2">
+                      Auto Iniciar
+                      <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded">NOVO</span>
+                    </p>
+                    <p className="text-sm text-gray-400">Inicia Vision automaticamente ao abrir o app</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAutoStart(!autoStart)}
+                  className={`relative w-14 h-7 rounded-full transition-colors ${
+                    autoStart ? 'bg-green-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                      autoStart ? 'translate-x-7' : ''
                     }`}
                   />
                 </button>
