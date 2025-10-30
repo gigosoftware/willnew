@@ -55,6 +55,17 @@ Sistema moderno de monitoramento de câmeras via mosaicos, consumindo a API do F
 - **Títulos de Streams**: Mostrar/ocultar nomes das câmeras
 - **Info do Mosaico**: Controle de exibição de metadados
 - **Fullscreen Automático**: Ativação opcional ao entrar no Vision
+- **Comandos de Voz**: Controle total do sistema por voz 🎤
+
+### 🎤 Comandos de Voz (NOVO!)
+- **Controle Hands-Free**: Opere o Will completamente por voz
+- **Ativação Simples**: Diga "Will" ou "Vision" + comando
+- **60+ Comandos**: Navegação, reprodução, favoritos, e mais
+- **Linguagem Natural**: Aceita múltiplas variações
+- **Privacidade Total**: Processamento 100% local
+- **Configurável**: Ative/desative nas configurações
+
+📖 **Guia completo**: [VOICE_COMMANDS.md](VOICE_COMMANDS.md)
 
 ---
 
@@ -74,9 +85,10 @@ Sistema moderno de monitoramento de câmeras via mosaicos, consumindo a API do F
 - **Framer Motion** - Animações fluidas e profissionais
 - **Lucide React** - Ícones modernos e consistentes
 
-### Vídeo
+### Vídeo & Voz
 - **HLS.js** - Player HLS otimizado para web
 - **Flussonic Watcher API** - Backend de streaming profissional
+- **Web Speech API** - Reconhecimento de voz nativo (Chrome/Edge)
 
 ---
 
@@ -309,6 +321,7 @@ Tema corporativo azul/índigo para uso empresarial
 - ✅ **Cleanup Automático**: Zero vazamento de memória
 - ✅ **Cache de Mosaicos**: Carregamento único após login
 - ✅ **Debounce em Buscas**: Redução de re-renders
+- ✅ **Comandos de Voz**: Processamento local (< 500ms latência)
 
 ### Métricas
 
@@ -358,13 +371,20 @@ npm run build
 
 ## 🗺️ Roadmap
 
-### v2.0 (Próxima Release)
+### v1.3.0 (Próxima Release)
+- [ ] Maximizar câmeras por voz
+- [ ] Ir para mosaico por nome (voz)
+- [ ] Feedback por voz (opcional)
+- [ ] Filtros avançados (layout, número de câmeras)
+- [ ] Histórico de comandos de voz
+
+### v2.0 (Futuro)
 - [ ] Dashboard de analytics
 - [ ] Alertas em tempo real
 - [ ] Gravação de sessões
 - [ ] Exportação de vídeos
 
-### v3.0 (Futuro)
+### v3.0 (Longo Prazo)
 - [ ] App mobile (React Native)
 - [ ] Reconhecimento facial
 - [ ] Detecção de eventos

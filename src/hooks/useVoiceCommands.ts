@@ -20,9 +20,6 @@ export const useVoiceCommands = () => {
   const [transcript, setTranscript] = useState('');
   const isActiveRef = useRef(false);
 
-  const playerStore = usePlayerStore();
-  const mosaicStore = useMosaicStore();
-
   // Comandos disponíveis
   const commands: VoiceCommand[] = [
     // Navegação

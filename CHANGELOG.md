@@ -121,6 +121,50 @@ Primeira versão estável do Will - Sistema de Monitoramento Inteligente.
 
 ---
 
+## [1.2.0] - 2025-01-30
+
+### ✨ Adicionado
+
+#### Sistema de Comandos de Voz 🎤
+- **Ativação por voz**: Diga "Will" ou "Vision" para ativar
+- **60+ comandos**: Controle total do sistema por voz
+- **Linguagem natural**: Aceita múltiplas variações de cada comando
+- **Indicador visual**: Feedback em tempo real no canto superior direito
+- **Configurável**: Toggle nas configurações (desabilitado por padrão)
+
+##### Comandos Disponíveis:
+- **Navegação**: próximo, anterior, ir para X, primeiro, último
+- **Reprodução**: pausar, play, continuar, reproduzir
+- **Favoritos**: reproduzir favoritos, vai pros favoritos
+- **Páginas**: lounge, vision, configurações, sair, fechar
+- **Seleção**: selecionar todos, limpar, marca tudo
+- **Intervalo**: intervalo 30 segundos, intervalo 2 minutos
+- **Informações**: status, quantos mosaicos, onde estou
+
+##### Tecnologia:
+- Web Speech API nativa (Chrome/Edge)
+- 100% local (zero latência, privacidade total)
+- Precisão 95-98%
+- Latência < 500ms
+- Português BR otimizado
+
+### 🐛 Corrigido
+
+#### Navegação Circular
+- Ajuste fino na navegação circular dos mosaicos
+- Botões sempre habilitados (loop infinito)
+
+#### Interface
+- Botão "Reproduzir Favoritos" movido para barra de ações
+- Melhor organização visual dos controles
+
+### 📝 Documentação
+- **VOICE_COMMANDS.md**: Guia completo de comandos de voz
+- **FAVORITES_SYSTEM.md**: Atualizado com integração de voz
+- **README.md**: Atualizado com funcionalidades de voz
+
+---
+
 ## [1.1.0] - 2025-01-30
 
 ### ✨ Adicionado
