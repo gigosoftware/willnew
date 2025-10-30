@@ -8,7 +8,8 @@ const defaultConfig = {
   showMosaicInfo: true,
   autoFullscreen: true,
   smartInterval: true,
-  autoStart: true
+  autoStart: true,
+  voiceEnabled: false
 };
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -20,6 +21,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   autoFullscreen: defaultConfig.autoFullscreen,
   smartInterval: defaultConfig.smartInterval,
   autoStart: defaultConfig.autoStart,
+  voiceEnabled: defaultConfig.voiceEnabled,
 
   loadUserConfig: async () => {
     try {
@@ -31,6 +33,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         autoFullscreen: config.autoFullscreen,
         smartInterval: config.smartInterval,
         autoStart: config.autoStart,
+        voiceEnabled: config.voiceEnabled ?? false,
       });
     } catch (error) {
       console.error('Load config error:', error);
@@ -139,7 +142,24 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       showMosaicInfo: state.showMosaicInfo, 
       autoFullscreen: state.autoFullscreen,
       smartInterval: state.smartInterval,
-      autoStart: auto
+      autoStart: auto,
+      voiceEnabled: state.voiceEnabled
+    }).catch(console.error);
+  },
+
+  setVoiceEnabled: async (enabled: boolean) => {
+    set({ voiceEnabled: enabled });
+    const state = get();
+    const config = await backendAPI.getConfig();
+    backendAPI.saveConfig({ 
+      ...config,
+      interval: state.interval, 
+      showStreamTitles: state.showStreamTitles, 
+      showMosaicInfo: state.showMosaicInfo, 
+      autoFullscreen: state.autoFullscreen,
+      smartInterval: state.smartInterval,
+      autoStart: state.autoStart,
+      voiceEnabled: enabled
     }).catch(console.error);
   },
 }));

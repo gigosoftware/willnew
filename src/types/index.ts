@@ -52,6 +52,7 @@ export interface PlayerState {
   autoFullscreen: boolean;
   smartInterval: boolean;
   autoStart: boolean;
+  voiceEnabled: boolean;
   loadUserConfig: () => void;
   setPlaying: (playing: boolean) => void;
   nextMosaic: (totalMosaics: number) => void;
@@ -62,6 +63,7 @@ export interface PlayerState {
   setAutoFullscreen: (auto: boolean) => void;
   setSmartInterval: (smart: boolean) => void;
   setAutoStart: (auto: boolean) => void;
+  setVoiceEnabled: (enabled: boolean) => void;
 }
 
 export interface ThemeState {

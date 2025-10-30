@@ -9,6 +9,7 @@ import { Settings } from './pages/Settings';
 import { useEffect } from 'react';
 import { authService } from './services/auth';
 import { Toaster } from 'react-hot-toast';
+import { VoiceControl } from './components/VoiceControl';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -17,6 +18,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 export const App = () => {
   const theme = useThemeStore((s) => s.theme);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   useEffect(() => {
     authService.initialize();
@@ -61,7 +63,10 @@ export const App = () => {
           path="/"
           element={
             <ProtectedRoute>
-              <Lounge />
+              <>
+                <VoiceControl />
+                <Lounge />
+              </>
             </ProtectedRoute>
           }
         />
@@ -69,7 +74,10 @@ export const App = () => {
           path="/vision"
           element={
             <ProtectedRoute>
-              <Vision />
+              <>
+                <VoiceControl />
+                <Vision />
+              </>
             </ProtectedRoute>
           }
         />
@@ -77,7 +85,10 @@ export const App = () => {
           path="/users"
           element={
             <ProtectedRoute>
-              <Users />
+              <>
+                <VoiceControl />
+                <Users />
+              </>
             </ProtectedRoute>
           }
         />
@@ -85,7 +96,10 @@ export const App = () => {
           path="/settings"
           element={
             <ProtectedRoute>
-              <Settings />
+              <>
+                <VoiceControl />
+                <Settings />
+              </>
             </ProtectedRoute>
           }
         />

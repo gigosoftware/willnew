@@ -122,6 +122,7 @@ app.post('/api/users', authMiddleware, async (req, res) => {
         autoFullscreen: true,
         smartInterval: true,
         autoStart: true,
+        voiceEnabled: false,
         selectedMosaics: [],
         favoriteMosaics: []
       }
@@ -242,6 +243,7 @@ app.get('/api/config', authMiddleware, async (req, res) => {
       autoFullscreen: true,
       smartInterval: true,
       autoStart: true,
+      voiceEnabled: false,
       selectedMosaics: [],
       favoriteMosaics: []
     });

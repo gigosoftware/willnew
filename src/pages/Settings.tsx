@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '../stores/usePlayerStore';
-import { ArrowLeft, Clock, Type, Info, Maximize, Zap, Play } from 'lucide-react';
+import { ArrowLeft, Clock, Type, Info, Maximize, Zap, Play, Mic } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const Settings = () => {
   const navigate = useNavigate();
-  const { interval, setInterval, showStreamTitles, setShowStreamTitles, showMosaicInfo, setShowMosaicInfo, autoFullscreen, setAutoFullscreen, smartInterval, setSmartInterval, autoStart, setAutoStart } = usePlayerStore();
+  const { interval, setInterval, showStreamTitles, setShowStreamTitles, showMosaicInfo, setShowMosaicInfo, autoFullscreen, setAutoFullscreen, smartInterval, setSmartInterval, autoStart, setAutoStart, voiceEnabled, setVoiceEnabled } = usePlayerStore();
 
   return (
     <div className="min-h-screen text-white">
@@ -179,6 +179,34 @@ export const Settings = () => {
                   <span
                     className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
                       autoStart ? 'translate-x-7' : ''
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="flex items-center gap-3">
+                  <Mic className="w-5 h-5 text-purple-400" />
+                  <div>
+                    <p className="font-medium flex items-center gap-2">
+                      Comandos de Voz
+                      <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded">NOVO</span>
+                    </p>
+                    <p className="text-sm text-gray-400">Controle o Will por voz dizendo "Will" + comando</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setVoiceEnabled(!voiceEnabled);
+                    toast.success(!voiceEnabled ? 'Comandos de voz ativados' : 'Comandos de voz desativados');
+                  }}
+                  className={`relative w-14 h-7 rounded-full transition-colors ${
+                    voiceEnabled ? 'bg-purple-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                      voiceEnabled ? 'translate-x-7' : ''
                     }`}
                   />
                 </button>
