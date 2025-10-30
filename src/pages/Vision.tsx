@@ -16,7 +16,7 @@ export const Vision = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [countdown, setCountdown] = useState(interval);
 
-  const currentMosaic = fullMosaics[currentIndex % fullMosaics.length];
+  const currentMosaic = fullMosaics[currentIndex];
 
   useEffect(() => {
     if (selectedMosaics.length === 0) {
@@ -40,6 +40,14 @@ export const Vision = () => {
 
     loadFullMosaics();
   }, [selectedMosaics, navigate]);
+
+  // Reset currentIndex ao entrar no Vision
+  useEffect(() => {
+    const { currentIndex } = usePlayerStore.getState();
+    if (currentIndex >= fullMosaics.length && fullMosaics.length > 0) {
+      usePlayerStore.setState({ currentIndex: 0 });
+    }
+  }, [fullMosaics.length]);
 
   useEffect(() => {
     // Calcula intervalo baseado no modo inteligente
@@ -67,7 +75,7 @@ export const Vision = () => {
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          nextMosaic();
+          nextMosaic(fullMosaics.length);
           return effectiveInterval;
         }
         return prev - 1;
@@ -100,11 +108,11 @@ export const Vision = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        if (currentIndex > 0) prevMosaic();
+        prevMosaic(fullMosaics.length);
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
-        if (currentIndex < fullMosaics.length - 1) nextMosaic();
-      } else if (e.key === 'p' || e.key === 'P') {
+        nextMosaic(fullMosaics.length);
+      } else if (e.key === ' ' || e.key === 'p' || e.key === 'P') {
         e.preventDefault();
         setPlaying(!isPlaying);
       } else if (e.key === 'Escape') {
@@ -115,7 +123,7 @@ export const Vision = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, fullMosaics.length, isPlaying, prevMosaic, nextMosaic, setPlaying, navigate]);
+  }, [fullMosaics.length, isPlaying, prevMosaic, nextMosaic, setPlaying, navigate]);
 
   if (isLoading) {
     return (
@@ -162,9 +170,8 @@ export const Vision = () => {
         {/* Right: Controls */}
         <div className="flex items-center gap-2">
           <button
-            onClick={prevMosaic}
-            disabled={currentIndex === 0}
-            className="p-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg transition-all"
+            onClick={() => prevMosaic(fullMosaics.length)}
+            className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all"
             title="Anterior"
           >
             <ChevronLeft className="w-5 h-5 text-white" />
@@ -177,9 +184,8 @@ export const Vision = () => {
             {isPlaying ? <Pause className="w-5 h-5 text-white" /> : <Play className="w-5 h-5 text-white" />}
           </button>
           <button
-            onClick={nextMosaic}
-            disabled={currentIndex >= fullMosaics.length - 1}
-            className="p-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg transition-all"
+            onClick={() => nextMosaic(fullMosaics.length)}
+            className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all"
             title="Próximo"
           >
             <ChevronRight className="w-5 h-5 text-white" />

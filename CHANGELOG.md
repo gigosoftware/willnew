@@ -121,18 +121,70 @@ Primeira versão estável do Will - Sistema de Monitoramento Inteligente.
 
 ---
 
+## [1.1.0] - 2025-01-30
+
+### ✨ Adicionado
+
+#### Sistema de Notificações Toast
+- Implementado `react-hot-toast` para feedback visual não-bloqueante
+- Toasts em todas as ações: login, logout, CRUD de usuários, configurações
+- Estilo dark com glassmorphism consistente com o tema
+- Ícones contextuais (verde para sucesso, vermelho para erro)
+- Duração de 3 segundos com fechamento automático
+- Posicionamento top-right
+
+#### Sistema de Favoritos ⭐
+- Botão de estrela em cada card de mosaico
+- Seção "Favoritos" destacada no topo do Lounge
+- Cards favoritos com gradiente amarelo/laranja
+- Botão "Reproduzir Favoritos" para iniciar todos de uma vez
+- Persistência por usuário no backend (DynamoDB)
+- Feedback visual com toasts ao adicionar/remover
+- Contador de favoritos em tempo real
+
+#### Melhorias de UX
+- Barra de ações (Selecionar Todos, Limpar, Buscar, Vision) fixa no topo
+- Atalho de teclado Espaço adicionado para Play/Pause (além do P)
+- Separação visual clara entre Favoritos e Todos os Mosaicos
+
+### 🐛 Corrigido
+
+#### Navegação Circular no Vision
+- Corrigido bug onde contador crescia infinitamente (35/34, 36/34...)
+- Implementada navegação circular: último mosaico → primeiro mosaico
+- Botões anterior/próximo agora funcionam em loop
+- Atalhos de teclado (setas) também funcionam em loop
+- Reset automático do índice ao entrar no Vision
+
+### 🔧 Técnico
+
+#### Dependências
+- Adicionado `react-hot-toast@^2.4.1`
+
+#### Backend
+- Campo `favoriteMosaics` adicionado à configuração do usuário
+- API `saveFavoriteMosaics()` implementada
+
+#### Store
+- `useMosaicStore`: Adicionado estado e ações para favoritos
+- `usePlayerStore`: Navegação circular com módulo (%) implementada
+
+### 📝 Documentação
+- Criado `TOAST_SYSTEM.md` - Guia completo do sistema de toasts
+- Criado `FAVORITES_SYSTEM.md` - Documentação do sistema de favoritos
+
+---
+
 ## [Unreleased]
 
-### 🚀 Planejado para v1.1.0
+### 🚀 Planejado para v1.2.0
 
-- [ ] Notificações toast para feedback de ações
-- [ ] Atalhos de teclado (espaço, setas)
 - [ ] Filtros avançados (layout, número de câmeras)
-- [ ] Sistema de favoritos
 - [ ] Histórico de mosaicos visualizados
 - [ ] Responsividade mobile completa
 - [ ] Modo picture-in-picture
 - [ ] Exportação de configurações
+- [ ] Dashboard de analytics (admin)
 
 ### 🔮 Futuro (v2.0+)
 

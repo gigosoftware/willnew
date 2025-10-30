@@ -6,6 +6,7 @@ import { backendAPI } from '../services/backend';
 export const useMosaicStore = create<MosaicState>((set, get) => ({
   mosaics: [],
   selectedMosaics: [],
+  favoriteMosaics: [],
   isLoading: false,
   error: null,
 
@@ -32,6 +33,18 @@ export const useMosaicStore = create<MosaicState>((set, get) => ({
     }
   },
 
+  loadFavoriteMosaics: async () => {
+    try {
+      const config = await backendAPI.getConfig();
+      const savedIds = config.favoriteMosaics || [];
+      const { mosaics } = get();
+      const validIds = savedIds.filter((id: number) => mosaics.some(m => m.id === id));
+      set({ favoriteMosaics: validIds });
+    } catch (error) {
+      console.error('Load favorite mosaics error:', error);
+    }
+  },
+
   toggleMosaic: (id: number) => {
     const { selectedMosaics } = get();
     const newSelection = selectedMosaics.includes(id)
@@ -41,8 +54,23 @@ export const useMosaicStore = create<MosaicState>((set, get) => ({
     backendAPI.saveSelectedMosaics(newSelection).catch(console.error);
   },
 
+  toggleFavorite: (id: number) => {
+    const { favoriteMosaics } = get();
+    const newFavorites = favoriteMosaics.includes(id)
+      ? favoriteMosaics.filter(m => m !== id)
+      : [...favoriteMosaics, id];
+    set({ favoriteMosaics: newFavorites });
+    backendAPI.saveFavoriteMosaics(newFavorites).catch(console.error);
+  },
+
   clearSelection: () => {
     set({ selectedMosaics: [] });
     backendAPI.saveSelectedMosaics([]).catch(console.error);
+  },
+
+  selectFavorites: () => {
+    const { favoriteMosaics } = get();
+    set({ selectedMosaics: [...favoriteMosaics] });
+    backendAPI.saveSelectedMosaics(favoriteMosaics).catch(console.error);
   },
 }));

@@ -86,6 +86,14 @@ export const backendAPI = {
     });
   },
 
+  saveFavoriteMosaics: async (favoriteMosaics: number[]) => {
+    const config = await fetchAPI('/config');
+    return fetchAPI('/config', {
+      method: 'PUT',
+      body: JSON.stringify({ ...config, favoriteMosaics }),
+    });
+  },
+
   // Logs
   getLogs: () => fetchAPI('/logs'),
 };

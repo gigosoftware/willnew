@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '../stores/usePlayerStore';
 import { ArrowLeft, Clock, Type, Info, Maximize, Zap, Play } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export const Settings = () => {
   const navigate = useNavigate();
@@ -35,7 +36,10 @@ export const Settings = () => {
                 </label>
                 <select
                   value={interval}
-                  onChange={(e) => setInterval(Number(e.target.value))}
+                  onChange={(e) => {
+                    setInterval(Number(e.target.value));
+                    toast.success('Intervalo atualizado!');
+                  }}
                   className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={10}>10 segundos</option>
@@ -58,7 +62,10 @@ export const Settings = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setShowStreamTitles(!showStreamTitles)}
+                  onClick={() => {
+                    setShowStreamTitles(!showStreamTitles);
+                    toast.success(!showStreamTitles ? 'Títulos ativados' : 'Títulos desativados');
+                  }}
                   className={`relative w-14 h-7 rounded-full transition-colors ${
                     showStreamTitles ? 'bg-blue-500' : 'bg-gray-600'
                   }`}
@@ -80,7 +87,10 @@ export const Settings = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setShowMosaicInfo(!showMosaicInfo)}
+                  onClick={() => {
+                    setShowMosaicInfo(!showMosaicInfo);
+                    toast.success(!showMosaicInfo ? 'Info ativada' : 'Info desativada');
+                  }}
                   className={`relative w-14 h-7 rounded-full transition-colors ${
                     showMosaicInfo ? 'bg-blue-500' : 'bg-gray-600'
                   }`}
@@ -102,7 +112,10 @@ export const Settings = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setAutoFullscreen(!autoFullscreen)}
+                  onClick={() => {
+                    setAutoFullscreen(!autoFullscreen);
+                    toast.success(!autoFullscreen ? 'Fullscreen automático ativado' : 'Fullscreen automático desativado');
+                  }}
                   className={`relative w-14 h-7 rounded-full transition-colors ${
                     autoFullscreen ? 'bg-blue-500' : 'bg-gray-600'
                   }`}
@@ -127,7 +140,10 @@ export const Settings = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setSmartInterval(!smartInterval)}
+                  onClick={() => {
+                    setSmartInterval(!smartInterval);
+                    toast.success(!smartInterval ? 'Intervalo inteligente ativado' : 'Intervalo inteligente desativado');
+                  }}
                   className={`relative w-14 h-7 rounded-full transition-colors ${
                     smartInterval ? 'bg-yellow-500' : 'bg-gray-600'
                   }`}
@@ -152,7 +168,10 @@ export const Settings = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setAutoStart(!autoStart)}
+                  onClick={() => {
+                    setAutoStart(!autoStart);
+                    toast.success(!autoStart ? 'Auto iniciar ativado' : 'Auto iniciar desativado');
+                  }}
                   className={`relative w-14 h-7 rounded-full transition-colors ${
                     autoStart ? 'bg-green-500' : 'bg-gray-600'
                   }`}

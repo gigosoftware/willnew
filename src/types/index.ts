@@ -31,12 +31,16 @@ export interface AuthState {
 export interface MosaicState {
   mosaics: Mosaic[];
   selectedMosaics: number[];
+  favoriteMosaics: number[];
   isLoading: boolean;
   error: string | null;
   fetchMosaics: () => Promise<void>;
   loadSelectedMosaics: () => Promise<void>;
+  loadFavoriteMosaics: () => Promise<void>;
   toggleMosaic: (id: number) => void;
+  toggleFavorite: (id: number) => void;
   clearSelection: () => void;
+  selectFavorites: () => void;
 }
 
 export interface PlayerState {
@@ -50,8 +54,8 @@ export interface PlayerState {
   autoStart: boolean;
   loadUserConfig: () => void;
   setPlaying: (playing: boolean) => void;
-  nextMosaic: () => void;
-  prevMosaic: () => void;
+  nextMosaic: (totalMosaics: number) => void;
+  prevMosaic: (totalMosaics: number) => void;
   setInterval: (interval: number) => void;
   setShowStreamTitles: (show: boolean) => void;
   setShowMosaicInfo: (show: boolean) => void;

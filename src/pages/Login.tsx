@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
 import { usePlayerStore } from '../stores/usePlayerStore';
 import { Monitor } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,10 +18,12 @@ export const Login = () => {
     setError('');
     const success = await login(email, password);
     if (success) {
-      loadUserConfig(); // Carrega configurações do usuário
+      loadUserConfig();
+      toast.success('Login realizado com sucesso!');
       navigate('/');
     } else {
       setError('Credenciais inválidas');
+      toast.error('Credenciais inválidas');
     }
   };
 

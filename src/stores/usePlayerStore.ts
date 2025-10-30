@@ -41,14 +41,16 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     set({ isPlaying: playing });
   },
 
-  nextMosaic: () => {
+  nextMosaic: (totalMosaics: number) => {
     const { currentIndex } = get();
-    set({ currentIndex: currentIndex + 1 });
+    const nextIndex = (currentIndex + 1) % totalMosaics;
+    set({ currentIndex: nextIndex });
   },
 
-  prevMosaic: () => {
+  prevMosaic: (totalMosaics: number) => {
     const { currentIndex } = get();
-    set({ currentIndex: Math.max(0, currentIndex - 1) });
+    const prevIndex = currentIndex === 0 ? totalMosaics - 1 : currentIndex - 1;
+    set({ currentIndex: prevIndex });
   },
 
   setInterval: async (interval: number) => {

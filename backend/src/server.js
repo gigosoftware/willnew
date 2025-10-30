@@ -122,7 +122,8 @@ app.post('/api/users', authMiddleware, async (req, res) => {
         autoFullscreen: true,
         smartInterval: true,
         autoStart: true,
-        selectedMosaics: []
+        selectedMosaics: [],
+        favoriteMosaics: []
       }
     };
     
@@ -241,7 +242,8 @@ app.get('/api/config', authMiddleware, async (req, res) => {
       autoFullscreen: true,
       smartInterval: true,
       autoStart: true,
-      selectedMosaics: []
+      selectedMosaics: [],
+      favoriteMosaics: []
     });
   } catch (error) {
     console.error('Get config error:', error);

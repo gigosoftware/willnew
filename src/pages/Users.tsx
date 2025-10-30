@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/useAuthStore';
 import { usersAPI } from '../services/usersAPI';
 import { backendAPI } from '../services/backend';
 import { ArrowLeft, Plus, Trash2, Edit, Activity } from 'lucide-react';
+import toast from 'react-hot-toast';
 import type { User } from '../types';
 
 interface AccessLog {
@@ -57,8 +58,10 @@ export const Users = () => {
         const updates: any = { isAdmin: formData.isAdmin };
         if (formData.password) updates.password = formData.password;
         await usersAPI.updateUser(formData.email, updates);
+        toast.success('Usuário atualizado com sucesso!');
       } else {
         await usersAPI.createUser(formData.email, formData.password, formData.isAdmin);
+        toast.success('Usuário criado com sucesso!');
       }
       setFormData({ email: '', password: '', isAdmin: false });
       setShowForm(false);
@@ -66,7 +69,7 @@ export const Users = () => {
       loadUsers();
     } catch (error) {
       console.error('Save user error:', error);
-      alert('Erro ao salvar usuário');
+      toast.error('Erro ao salvar usuário');
     }
   };
 
@@ -80,10 +83,11 @@ export const Users = () => {
     if (confirm('Confirma exclusão?')) {
       try {
         await usersAPI.deleteUser(email);
+        toast.success('Usuário deletado com sucesso!');
         loadUsers();
       } catch (error) {
         console.error('Delete user error:', error);
-        alert('Erro ao deletar usuário');
+        toast.error('Erro ao deletar usuário');
       }
     }
   };
