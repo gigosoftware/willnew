@@ -160,32 +160,34 @@ export const Lounge = () => {
               />
             </div>
           </div>
-          <button
-            onClick={handlePlay}
-            disabled={selectedMosaics.length === 0}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
-          >
-            <Play className="w-5 h-5" />
-            Vision ({selectedMosaics.length})
-          </button>
-        </div>
-
-        {/* Seção de Favoritos */}
-        {favoriteMosaicsList.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
-                Favoritos
-              </h2>
+          <div className="flex items-center gap-2">
+            {favoriteMosaics.length > 0 && (
               <button
                 onClick={handlePlayFavorites}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl"
               >
                 <Sparkles className="w-5 h-5" />
-                Reproduzir Favoritos ({favoriteMosaics.length})
+                Favoritos ({favoriteMosaics.length})
               </button>
-            </div>
+            )}
+            <button
+              onClick={handlePlay}
+              disabled={selectedMosaics.length === 0}
+              className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
+            >
+              <Play className="w-5 h-5" />
+              Vision ({selectedMosaics.length})
+            </button>
+          </div>
+        </div>
+
+        {/* Seção de Favoritos */}
+        {favoriteMosaicsList.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold flex items-center gap-2 mb-4">
+              <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+              Favoritos
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {favoriteMosaicsList.map((mosaic) => (
                 <motion.div
