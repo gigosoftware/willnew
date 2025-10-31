@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { AuthState } from '../types';
 import { backendAPI } from '../services/backend';
+import { logger } from '../utils/logger';
 
 const getStoredUser = () => {
   const token = localStorage.getItem('will_token');
@@ -19,7 +20,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, isAuthenticated: true });
       return true;
     } catch (error) {
-      console.error('Login error:', error);
+      logger.error('Login error:', error);
       return false;
     }
   },

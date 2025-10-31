@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { PlayerState } from '../types';
 import { backendAPI } from '../services/backend';
+import { logger } from '../utils/logger';
 
 const defaultConfig = {
   interval: 30,
@@ -36,7 +37,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         voiceEnabled: config.voiceEnabled ?? false,
       });
     } catch (error) {
-      console.error('Load config error:', error);
+      logger.error('Load config error:', error);
     }
   },
 
@@ -68,7 +69,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       autoFullscreen: state.autoFullscreen,
       smartInterval: state.smartInterval,
       autoStart: state.autoStart
-    }).catch(console.error);
+    }).catch(logger.error);
   },
 
   setSmartInterval: async (smart: boolean) => {
@@ -83,7 +84,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       autoFullscreen: state.autoFullscreen,
       smartInterval: smart,
       autoStart: state.autoStart
-    }).catch(console.error);
+    }).catch(logger.error);
   },
 
   setShowStreamTitles: async (show: boolean) => {
@@ -98,7 +99,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       autoFullscreen: state.autoFullscreen,
       smartInterval: state.smartInterval,
       autoStart: state.autoStart
-    }).catch(console.error);
+    }).catch(logger.error);
   },
 
   setShowMosaicInfo: async (show: boolean) => {
@@ -113,7 +114,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       autoFullscreen: state.autoFullscreen,
       smartInterval: state.smartInterval,
       autoStart: state.autoStart
-    }).catch(console.error);
+    }).catch(logger.error);
   },
 
   setAutoFullscreen: async (auto: boolean) => {
@@ -128,7 +129,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       autoFullscreen: auto,
       smartInterval: state.smartInterval,
       autoStart: state.autoStart
-    }).catch(console.error);
+    }).catch(logger.error);
   },
 
   setAutoStart: async (auto: boolean) => {
@@ -144,7 +145,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       smartInterval: state.smartInterval,
       autoStart: auto,
       voiceEnabled: state.voiceEnabled
-    }).catch(console.error);
+    }).catch(logger.error);
   },
 
   setVoiceEnabled: async (enabled: boolean) => {
@@ -160,6 +161,6 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       smartInterval: state.smartInterval,
       autoStart: state.autoStart,
       voiceEnabled: enabled
-    }).catch(console.error);
+    }).catch(logger.error);
   },
 }));

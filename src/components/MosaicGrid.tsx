@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { HLSPlayer } from './HLSPlayer';
 import type { Mosaic } from '../types';
@@ -16,8 +16,10 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
   const [maximizedStream, setMaximizedStream] = useState<{ name: string; title: string; hlsUrl: string } | null>(null);
   const [wasPlaying, setWasPlaying] = useState(false);
 
+  const keyHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    keyHandlerRef.current = (e: KeyboardEvent) => {
       if (maximizedStream && (e.key === 'Escape' || (e.key >= '1' && e.key <= '9'))) {
         e.preventDefault();
         setMaximizedStream(null);
@@ -40,8 +42,14 @@ export const MosaicGrid = ({ mosaic }: MosaicGridProps) => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    const handler = keyHandlerRef.current;
+    window.addEventListener('keydown', handler);
+    
+    return () => {
+      if (handler) {
+        window.removeEventListener('keydown', handler);
+      }
+    };
   }, [maximizedStream, mosaic, isPlaying, setPlaying, wasPlaying]);
 
   return (

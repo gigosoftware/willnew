@@ -12,6 +12,8 @@ export const HLSPlayer = ({ src, className = '' }: HLSPlayerProps) => {
   const hlsRef = useRef<Hls | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const pauseHandlerRef = useRef<(() => void) | null>(null);
+  const playHandlerRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (!videoRef.current || !src) {
@@ -22,8 +24,6 @@ export const HLSPlayer = ({ src, className = '' }: HLSPlayerProps) => {
     const video = videoRef.current;
     setError(null);
     setIsLoading(true);
-
-    console.log('[HLSPlayer] Loading:', src);
 
     if (Hls.isSupported()) {
       const hls = new Hls({
@@ -39,7 +39,6 @@ export const HLSPlayer = ({ src, className = '' }: HLSPlayerProps) => {
       hlsRef.current = hls;
       
       hls.on(Hls.Events.ERROR, (_event, data) => {
-        console.error('[HLSPlayer] Error:', data);
         if (data.fatal) {
           setError(`Erro: ${data.type}`);
           setIsLoading(false);
@@ -47,27 +46,26 @@ export const HLSPlayer = ({ src, className = '' }: HLSPlayerProps) => {
       });
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log('[HLSPlayer] Manifest parsed');
         setIsLoading(false);
-        video.muted = true; // Garante muted para autoplay
-        video.play().catch((e) => {
-          console.error('[HLSPlayer] Play error:', e);
-          setError('Erro ao reproduzir');
-        });
+        video.muted = true;
+        video.play().catch(() => setError('Erro ao reproduzir'));
       });
       
-      // Limpar buffer ao pausar
-      video.addEventListener('pause', () => {
+      // Handlers com referência para remoção
+      pauseHandlerRef.current = () => {
         if (hlsRef.current) {
           hlsRef.current.stopLoad();
         }
-      });
+      };
       
-      video.addEventListener('play', () => {
+      playHandlerRef.current = () => {
         if (hlsRef.current) {
           hlsRef.current.startLoad();
         }
-      });
+      };
+      
+      video.addEventListener('pause', pauseHandlerRef.current);
+      video.addEventListener('play', playHandlerRef.current);
 
       hls.loadSource(src);
       hls.attachMedia(video);
@@ -90,19 +88,33 @@ export const HLSPlayer = ({ src, className = '' }: HLSPlayerProps) => {
     }
 
     return () => {
-      console.log('[HLSPlayer] Cleanup:', src);
-      
-      // Pausar vídeo
+      // Remover event listeners
       if (video) {
+        if (pauseHandlerRef.current) {
+          video.removeEventListener('pause', pauseHandlerRef.current);
+          pauseHandlerRef.current = null;
+        }
+        if (playHandlerRef.current) {
+          video.removeEventListener('play', playHandlerRef.current);
+          playHandlerRef.current = null;
+        }
+        
         video.pause();
         video.removeAttribute('src');
-        video.load(); // Força limpeza do buffer
+        video.load();
       }
       
-      // Destruir HLS
+      // Destruir HLS completamente
       if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
+        try {
+          hlsRef.current.stopLoad();
+          hlsRef.current.detachMedia();
+          hlsRef.current.destroy();
+        } catch (e) {
+          // Ignorar erros de cleanup
+        } finally {
+          hlsRef.current = null;
+        }
       }
     };
   }, [src]);

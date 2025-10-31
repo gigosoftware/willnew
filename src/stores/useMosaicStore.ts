@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { MosaicState } from '../types';
 import { api } from '../services/api';
 import { backendAPI } from '../services/backend';
+import { logger } from '../utils/logger';
 
 export const useMosaicStore = create<MosaicState>((set, get) => ({
   mosaics: [],
@@ -29,7 +30,7 @@ export const useMosaicStore = create<MosaicState>((set, get) => ({
       const validIds = savedIds.filter((id: number) => mosaics.some(m => m.id === id));
       set({ selectedMosaics: validIds });
     } catch (error) {
-      console.error('Load selected mosaics error:', error);
+      logger.error('Load selected mosaics error:', error);
     }
   },
 
@@ -41,7 +42,7 @@ export const useMosaicStore = create<MosaicState>((set, get) => ({
       const validIds = savedIds.filter((id: number) => mosaics.some(m => m.id === id));
       set({ favoriteMosaics: validIds });
     } catch (error) {
-      console.error('Load favorite mosaics error:', error);
+      logger.error('Load favorite mosaics error:', error);
     }
   },
 
@@ -51,7 +52,7 @@ export const useMosaicStore = create<MosaicState>((set, get) => ({
       ? selectedMosaics.filter(m => m !== id)
       : [...selectedMosaics, id];
     set({ selectedMosaics: newSelection });
-    backendAPI.saveSelectedMosaics(newSelection).catch(console.error);
+    backendAPI.saveSelectedMosaics(newSelection).catch(logger.error);
   },
 
   toggleFavorite: (id: number) => {
@@ -60,17 +61,17 @@ export const useMosaicStore = create<MosaicState>((set, get) => ({
       ? favoriteMosaics.filter(m => m !== id)
       : [...favoriteMosaics, id];
     set({ favoriteMosaics: newFavorites });
-    backendAPI.saveFavoriteMosaics(newFavorites).catch(console.error);
+    backendAPI.saveFavoriteMosaics(newFavorites).catch(logger.error);
   },
 
   clearSelection: () => {
     set({ selectedMosaics: [] });
-    backendAPI.saveSelectedMosaics([]).catch(console.error);
+    backendAPI.saveSelectedMosaics([]).catch(logger.error);
   },
 
   selectFavorites: () => {
     const { favoriteMosaics } = get();
     set({ selectedMosaics: [...favoriteMosaics] });
-    backendAPI.saveSelectedMosaics(favoriteMosaics).catch(console.error);
+    backendAPI.saveSelectedMosaics(favoriteMosaics).catch(logger.error);
   },
 }));

@@ -1,4 +1,5 @@
 import type { Mosaic } from '../types';
+import { logger } from '../utils/logger';
 
 const BASE_URL = import.meta.env.VITE_WATCHER_BASE_URL;
 const TOKEN = import.meta.env.VITE_WATCHER_TOKEN;
@@ -25,7 +26,7 @@ export const api = {
     });
     if (!response.ok) throw new Error('Failed to fetch mosaic');
     const data = await response.json();
-    console.log('[API] Mosaic response:', data);
+    logger.log('[API] Mosaic response:', data);
     return data;
   },
 };

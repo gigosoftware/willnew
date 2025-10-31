@@ -19,6 +19,7 @@ export const useVoiceCommands = () => {
   const [isActive, setIsActive] = useState(false);
   const [transcript, setTranscript] = useState('');
   const isActiveRef = useRef(false);
+  const activeTimeoutRef = useRef<number | null>(null);
 
   // Comandos disponíveis
   const commands: VoiceCommand[] = [
@@ -252,7 +253,6 @@ export const useVoiceCommands = () => {
     // Verificar suporte
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      console.warn('Speech Recognition não suportado');
       return;
     }
 
@@ -265,7 +265,6 @@ export const useVoiceCommands = () => {
 
     recognition.onstart = () => {
       setIsListening(true);
-      console.log('[Voice] Escutando...');
     };
 
     recognition.onend = () => {
@@ -275,7 +274,6 @@ export const useVoiceCommands = () => {
     };
 
     recognition.onerror = (event: any) => {
-      console.error('[Voice] Erro:', event.error);
       if (event.error === 'not-allowed') {
         toast.error('Permissão de microfone negada');
       }
@@ -293,7 +291,6 @@ export const useVoiceCommands = () => {
       
       if (!text) return;
       
-      console.log('[Voice] Reconhecido:', text);
       setTranscript(text);
 
       // Detectar palavra de ativação "Will" ou "Vision" (com variações de pronúncia)
@@ -305,9 +302,16 @@ export const useVoiceCommands = () => {
         isActiveRef.current = true;
         setIsActive(true);
         toast('🎤 Escutando...', { duration: 2000 });
-        setTimeout(() => {
+        
+        // Limpar timeout anterior se existir
+        if (activeTimeoutRef.current) {
+          clearTimeout(activeTimeoutRef.current);
+        }
+        
+        activeTimeoutRef.current = setTimeout(() => {
           isActiveRef.current = false;
           setIsActive(false);
+          activeTimeoutRef.current = null;
         }, 5000);
         return;
       }
@@ -319,7 +323,6 @@ export const useVoiceCommands = () => {
         for (const cmd of commands) {
           const match = text.match(cmd.pattern);
           if (match) {
-            console.log('[Voice] Executando:', cmd.description);
             cmd.action(match);
             commandFound = true;
             isActiveRef.current = false;
@@ -347,13 +350,24 @@ export const useVoiceCommands = () => {
     }
 
     return () => {
+      // Limpar timeout
+      if (activeTimeoutRef.current) {
+        clearTimeout(activeTimeoutRef.current);
+        activeTimeoutRef.current = null;
+      }
+      
+      // Parar reconhecimento
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
+          recognitionRef.current = null;
         } catch (e) {
           // Ignorar erro se já parou
         }
       }
+      
+      // Resetar estados
+      isActiveRef.current = false;
     };
   }, [voiceEnabled]);
 

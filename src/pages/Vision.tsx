@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMosaicStore } from '../stores/useMosaicStore';
 import { usePlayerStore } from '../stores/usePlayerStore';
@@ -15,6 +15,7 @@ export const Vision = () => {
   const [fullMosaics, setFullMosaics] = useState<Mosaic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [countdown, setCountdown] = useState(interval);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const currentMosaic = fullMosaics[currentIndex];
 
@@ -25,20 +26,39 @@ export const Vision = () => {
     }
 
     const loadFullMosaics = async () => {
+      // Cancelar requisições anteriores
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      
+      abortControllerRef.current = new AbortController();
       setIsLoading(true);
+      
       try {
         const promises = selectedMosaics.map(id => api.getMosaic(id));
         const loaded = await Promise.all(promises);
-        console.log('[Player] Loaded mosaics:', loaded);
-        setFullMosaics(loaded);
+        
+        // Verificar se não foi cancelado
+        if (!abortControllerRef.current?.signal.aborted) {
+          setFullMosaics(loaded);
+        }
       } catch (error) {
-        console.error('[Player] Error loading mosaics:', error);
+        // Ignorar erros se foi cancelado
       } finally {
-        setIsLoading(false);
+        if (!abortControllerRef.current?.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
 
     loadFullMosaics();
+    
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
   }, [selectedMosaics, navigate]);
 
   // Reset currentIndex ao entrar no Vision
@@ -56,7 +76,6 @@ export const Vision = () => {
     if (smartInterval && currentMosaic) {
       const cameraCount = getCameraCount(currentMosaic.type);
       effectiveInterval = calculateSmartInterval(interval, cameraCount);
-      console.log(`[Vision] Smart Interval: ${cameraCount} cameras = ${effectiveInterval}s`);
     }
     
     setCountdown(effectiveInterval);
@@ -86,10 +105,12 @@ export const Vision = () => {
   }, [isPlaying, interval, smartInterval, fullMosaics.length, currentMosaic, nextMosaic]);
 
   useEffect(() => {
-    if (autoFullscreen) {
+    if (autoFullscreen && document.documentElement.requestFullscreen) {
       const enterFullscreen = async () => {
         try {
-          await document.documentElement.requestFullscreen?.();
+          if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen();
+          }
         } catch (error) {
           // Fullscreen requires user interaction
         }
@@ -98,14 +119,16 @@ export const Vision = () => {
     }
 
     return () => {
-      if (document.fullscreenElement) {
-        document.exitFullscreen?.().catch(() => {});
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
       }
     };
   }, [autoFullscreen]);
 
+  const visionKeyHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    visionKeyHandlerRef.current = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
         prevMosaic(fullMosaics.length);
@@ -121,8 +144,14 @@ export const Vision = () => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    const handler = visionKeyHandlerRef.current;
+    window.addEventListener('keydown', handler);
+    
+    return () => {
+      if (handler) {
+        window.removeEventListener('keydown', handler);
+      }
+    };
   }, [fullMosaics.length, isPlaying, prevMosaic, nextMosaic, setPlaying, navigate]);
 
   if (isLoading) {
